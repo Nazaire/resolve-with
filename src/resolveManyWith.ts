@@ -1,10 +1,22 @@
-import { RelationGetters, resolveWith } from "./resolveWith";
+import { resolveValues } from "./resolveValues";
+import { Node, ResolvedValues } from "./utils";
 
+/**
+ * Resolves relations on each item in an array
+ * @param valuesPromise
+ * @param relationGetters
+ * @returns
+ */
 export async function resolveManyWith<T, Relations extends {}>(
-  valuePromises: Promise<T>[],
-  relationGetters: RelationGetters<T, Relations>
-) {
-  return await Promise.all(
-    valuePromises.map((p) => resolveWith(p, relationGetters))
+  valuesPromise: Promise<T[]>,
+  relationGetters: (value: T) => Relations
+): Promise<Node<T, ResolvedValues<Relations>>[]> {
+  const values = await valuesPromise;
+  const nodes = await Promise.all(
+    values.map(async (value) => {
+      const relations = await resolveValues(relationGetters(value));
+      return { value, ...relations };
+    })
   );
+  return nodes;
 }

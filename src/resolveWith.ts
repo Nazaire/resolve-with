@@ -1,21 +1,7 @@
-import { isNil } from "./utils";
-
-type Exclude<T, U> = T extends U ? never : T;
-
-const isPromise = (p: any) => {
-  if (typeof p === "object" && typeof p.then === "function") {
-    return true;
-  }
-
-  return false;
-};
-
-export type Node<T, Relations extends {}> = {
-  value: T;
-} & Relations;
+import { isNil, isPromise, Node, ResolvedValues } from "./utils";
 
 export type RelationGetters<T, Relations> = {
-  [P in keyof Relations]?:
+  [P in keyof Relations]:
     | ((value: Exclude<T, Error | null>) => Promise<Relations[P]>)
     | Promise<Relations[P]>;
 };
@@ -23,7 +9,7 @@ export type RelationGetters<T, Relations> = {
 export async function resolveWith<T, Relations extends {}>(
   valuePromise: Promise<T>,
   relationGetters: RelationGetters<T, Relations>
-): Promise<Node<T, { [P in keyof Relations]: Relations[P] | null }>> {
+): Promise<Node<T, ResolvedValues<Relations>>> {
   const value = await valuePromise;
 
   const relations = Object.entries(relationGetters);
@@ -47,7 +33,9 @@ export async function resolveWith<T, Relations extends {}>(
     })
   );
 
-  const resolvedRelations = Object.fromEntries(resolvedEntries) as Relations;
+  const resolvedRelations = Object.fromEntries(
+    resolvedEntries
+  ) as ResolvedValues<Relations>;
 
   return Object.assign(resolvedRelations, { value });
 }
