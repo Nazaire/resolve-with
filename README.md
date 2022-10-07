@@ -26,7 +26,7 @@ const bookQuery = (bookId: string) => {
     relatedBooks: resolveManyWith(
       getRelatedBooks(bookId),
       (relatedBook) => ({
-        author: resolveWith(getAuthorById(relatedBook.id), {
+        author: resolveWith(getAuthorById(relatedBook.authorId), {
           favouriteBook: (author) => getBookById(author.favouriteBookId),
         }),
       })
