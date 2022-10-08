@@ -2,7 +2,16 @@
 
 Chain related promises together in a **fully typed** graph-like structure. Works quite nicely with [DataLoader](https://www.npmjs.com/package/dataloader)
 
+```sh
+npm install --save @nazaire/resolve-with
 ```
+
+
+## Example Usage
+
+```
+import { resolveWith, resolveManyWith } from "@nazaire/resolve-with";
+
  let getBookById: (
   id: string
 ) => Promise<{ id: string; title: string; authorId: string }>;
@@ -18,10 +27,13 @@ let getRelatedBooks: (
 
 const bookQuery = (bookId: string) => {
   return resolveWith(getBookById(bookId), {
+  
     // 1. new promise using result
     author: (book) => getAuthorById(book.authorId),
+    
     // 2. parallel promises just for convenience
     tags: getTagsForBook(bookId),
+    
     // 3. complex nested relations
     relatedBooks: resolveManyWith(
       getRelatedBooks(bookId),
