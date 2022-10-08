@@ -1,6 +1,6 @@
 # @nazaire/resolve-with
 
-Chain related promises together in a **fully typed** graph-like structure. Works quite nicely with [DataLoader](https://www.npmjs.com/package/dataloader>)
+Chain related promises together in a **fully typed** graph-like structure. Works quite nicely with [DataLoader](https://www.npmjs.com/package/dataloader)
 
 ```
  let getBookById: (
@@ -40,6 +40,6 @@ book.value.title; // string
 book.author.name; // string
 book.tags[0].name; // string
 book.relatedBooks[0].value.title; // string
-book.relatedBooks[0].author.value.name; // string;
-book.relatedBooks[0].author.favouriteBook.title; // string;
+book.relatedBooks[0].author.value.name; // string
+book.relatedBooks[0].author.favouriteBook.title; // string
 ```
