@@ -1,4 +1,5 @@
-import { isNil, isPromise, Node, ResolvedValues } from "./utils";
+import { Node, ResolvedValues } from "./types";
+import { isNil, isPromise } from "./utils";
 
 export type RelationGetters<T, Relations> = {
   [P in keyof Relations]:

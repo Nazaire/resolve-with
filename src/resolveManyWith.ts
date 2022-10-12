@@ -1,5 +1,5 @@
 import { resolveValues } from "./resolveValues";
-import { Node, ResolvedValues } from "./utils";
+import { Node, ResolvedValues } from "./types";
 
 /**
  * Resolves relations on each item in an array

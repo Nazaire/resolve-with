@@ -1,4 +1,5 @@
-import { isPromise, ResolvedValues } from "./utils";
+import { isPromise } from "./utils";
+import { ResolvedValues } from "./types";
 
 /**
  * Awaits all the promises of each value in an object literal
