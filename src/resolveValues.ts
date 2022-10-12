@@ -1,14 +1,13 @@
 import { isPromise } from "./utils";
-import { ResolvedValues } from "./types";
 
 /**
  * Awaits all the promises of each value in an object literal
  * @param object
  * @returns
  */
-export async function resolveValues<O extends {}>(
-  object: O
-): Promise<ResolvedValues<O>> {
+export async function resolveValues<O extends {}>(object: {
+  [K in keyof O]: Promise<O[K]>;
+}): Promise<O> {
   const entries = Object.entries(object);
 
   const resolvedEntries = await Promise.all(
@@ -21,9 +20,7 @@ export async function resolveValues<O extends {}>(
     })
   );
 
-  const resolvedRelations = Object.fromEntries(
-    resolvedEntries
-  ) as ResolvedValues<O>;
+  const resolvedRelations = Object.fromEntries(resolvedEntries) as O;
 
   return resolvedRelations;
 }

@@ -1,4 +1,4 @@
-import { Node, ResolvedValues } from "./types";
+import { Node } from "./types";
 import { isNil, isPromise } from "./utils";
 
 export type RelationGetters<T, Relations> = {
@@ -10,7 +10,7 @@ export type RelationGetters<T, Relations> = {
 export async function resolveWith<T, Relations extends {}>(
   valuePromise: Promise<T>,
   relationGetters: RelationGetters<T, Relations>
-): Promise<Node<T, ResolvedValues<Relations>>> {
+): Promise<Node<T, Relations>> {
   const value = await valuePromise;
 
   const relations = Object.entries(relationGetters);
@@ -21,11 +21,15 @@ export async function resolveWith<T, Relations extends {}>(
       if (value instanceof Error) return [prop, null];
 
       if (typeof getter === "function") {
-        const result = getter(value);
+        try {
+          const result = getter(value);
 
-        if (isPromise(result)) {
-          return [prop, await result];
-        } else return [prop, result];
+          if (isPromise(result)) {
+            return [prop, await result];
+          } else return [prop, result];
+        } catch (error) {
+          return [prop, error as Error];
+        }
       } else if (isPromise(getter)) {
         return [prop, await getter];
       } else {
@@ -34,9 +38,7 @@ export async function resolveWith<T, Relations extends {}>(
     })
   );
 
-  const resolvedRelations = Object.fromEntries(
-    resolvedEntries
-  ) as ResolvedValues<Relations>;
+  const resolvedRelations = Object.fromEntries(resolvedEntries) as Relations;
 
   return Object.assign(resolvedRelations, { value });
 }
